@@ -3,6 +3,7 @@
 require 'json'
 require 'date'
 require 'irb'
+require_relative '../lib/pricing_helpers'
 
 input_path = 'data/input.json'
 output_path = 'data/output.json'
@@ -11,9 +12,7 @@ input_data = JSON.parse(File.read(input_path))
 cars = input_data['cars'].map { |car| [car['id'], car] }.to_h
 rentals_output = input_data['rentals'].map do |rental|
   car = cars[rental['car_id']]
-  start_date = Date.parse(rental['start_date'])
-  end_date = Date.parse(rental['end_date'])
-  rental_duration = (end_date - start_date).to_i + 1
+  rental_duration = PricingHelpers.rental_duration(rental['start_date'], rental['end_date'])
 
   duration_price = rental_duration * car['price_per_day']
   distance_price = rental['distance'] * car['price_per_km']
